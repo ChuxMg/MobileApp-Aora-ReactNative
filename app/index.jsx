@@ -6,12 +6,17 @@ import { StatusBar } from "expo-status-bar";
 
 import { images } from "../constants";
 import CustomBotton from "../components/CustomBotton";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
+import { useGlobalContext } from "../context/GlobalProvider";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 // SplashScreen.preventAutoHideAsync();
 
 export default function Home() {
+  const { isLoading, isLoggedIn } = useGlobalContext();
+
+  if(!isLoading && isLoggedIn) return <Redirect href="/home" />
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
