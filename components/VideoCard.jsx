@@ -1,17 +1,38 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { icons } from "../constants";
 import { ResizeMode, Video } from "expo-av";
+import { Ionicons } from "@expo/vector-icons";
+import { FavoritesContext } from "../context/favorites-context";
+
 
 const VideoCard = ({
   video: {
     title,
     thumbnail,
     video,
+    $id,
     creator: { username, avatar },
   },
 }) => {
+  const favoriteVideosCtx = useContext(FavoritesContext);
+
   const [play, setPlay] = useState(false);
+
+  const videoIsFavorite = favoriteVideosCtx.ids.includes($id);
+
+
+   const changeFavoriteStatus = () => {
+    //  console.log("Pressed!");
+
+     if (videoIsFavorite) {
+       favoriteVideosCtx.removeFavorite($id);
+     } else {
+       favoriteVideosCtx.addFavorite($id);
+     }
+   };
+
+   
 
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -41,12 +62,14 @@ const VideoCard = ({
         </View>
 
         <View className="pt-2">
-          <Image source={icons.menu} className="w-5 h-5" resizeMode="contain" />
+          <TouchableOpacity onPress={changeFavoriteStatus}>
+            <Ionicons name="star-sharp" size={24} color={videoIsFavorite ? "#FFA001" : "white"} />
+            {/* <Image source={icons.menu} className="w-5 h-5" resizeMode="contain" /> */}
+          </TouchableOpacity>
         </View>
       </View>
       {play ? (
         <Video
-          
           source={{ uri: video }}
           className="w-full h-60 rounded-xl mt-3"
           useNativeControls
